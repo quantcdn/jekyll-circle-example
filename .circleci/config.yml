@@ -1,0 +1,39 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: cimg/ruby:2.7-node
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: bundle install
+
+      - save_cache:
+          key: "app-{{ .Branch }}"
+          paths:
+            - _site
+
+  deploy:
+    docker:
+      - image: quantcdn/cli
+    steps:
+      - restore_cache:
+          keys:
+            - "app-{{ .Branch }}"
+      - run:
+          name: Deploy to Quant!
+          command: quant deploy _site -c ${QUANT_CUSTOMER} -t ${QUANT_TOKEN} -p ${QUANT_PROJECT}
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
