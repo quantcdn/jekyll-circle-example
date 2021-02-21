@@ -6,12 +6,21 @@ jobs:
       - image: cimg/ruby:2.7-node
     steps:
       - checkout
+
+      - run:
+          name: Install Jekyll
+          command: gem install jekyll
+
       - run:
           name: Install dependencies
           command: bundle install
 
+      - run:
+          name: Build site
+          command: bundle exec jekyll build
+
       - save_cache:
-          key: "app-{{ .Branch }}"
+          key: "app-{{ .Revision }}"
           paths:
             - _site
 
@@ -21,7 +30,7 @@ jobs:
     steps:
       - restore_cache:
           keys:
-            - "app-{{ .Branch }}"
+            - "app-{{ .Revision }}"
       - run:
           name: Deploy to Quant!
           command: quant deploy /home/circleci/project/_site -c ${QUANT_CUSTOMER} -t ${QUANT_TOKEN} -p ${QUANT_PROJECT}
