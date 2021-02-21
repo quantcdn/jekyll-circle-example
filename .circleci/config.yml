@@ -24,7 +24,7 @@ jobs:
             - "app-{{ .Branch }}"
       - run:
           name: Deploy to Quant!
-          command: quant deploy _site -c ${QUANT_CUSTOMER} -t ${QUANT_TOKEN} -p ${QUANT_PROJECT}
+          command: quant deploy /home/circleci/project/_site -c ${QUANT_CUSTOMER} -t ${QUANT_TOKEN} -p ${QUANT_PROJECT}
 
 workflows:
   version: 2
